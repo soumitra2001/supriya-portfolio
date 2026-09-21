@@ -9,9 +9,6 @@ interface MagneticButtonProps {
   className?: string;
   strength?: number;
   onClick?: () => void;
-  href?: string;
-  target?: string;
-  rel?: string;
   ariaLabel?: string;
 }
 
@@ -20,9 +17,6 @@ export function MagneticButton({
   className = "",
   strength = 0.25,
   onClick,
-  href,
-  target,
-  rel,
   ariaLabel,
 }: MagneticButtonProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -55,42 +49,18 @@ export function MagneticButton({
     y.set(0);
   };
 
-  const content = (
+  return (
     <motion.div
       ref={ref}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onClick={onClick}
+      aria-label={ariaLabel}
       style={{ x, y }}
       className={`inline-block ${className}`}
     >
       {children}
     </motion.div>
-  );
-
-  if (href) {
-    return (
-      <a
-        href={href}
-        target={target}
-        rel={rel}
-        aria-label={ariaLabel}
-        onClick={onClick}
-        className="inline-block"
-      >
-        {content}
-      </a>
-    );
-  }
-
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={ariaLabel}
-      className="inline-block bg-transparent border-0 p-0 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-full"
-    >
-      {content}
-    </button>
   );
 }

@@ -1,75 +1,116 @@
 "use client";
 
-import React, { useRef, useState, useMemo } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, Text, Billboard } from "@react-three/drei";
-import * as THREE from "three";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import {
+  Cpu,
+  Database,
+  Radio,
+  Server,
+  Cloud,
+  Layers,
+  Activity,
+  Zap,
+  ShieldCheck,
+} from "lucide-react";
 
-interface SystemNode {
+interface NodeData {
   id: string;
   name: string;
+  subtitle: string;
   role: string;
-  category: "core" | "storage" | "network" | "infra";
-  position: [number, number, number];
+  x: number;
+  y: number;
   color: string;
+  glowColor: string;
+  category: "core" | "network" | "storage" | "infra";
+  icon: React.ComponentType<{ className?: string }>;
 }
 
-const NODES: SystemNode[] = [
+const NODES: NodeData[] = [
   {
     id: "core",
     name: "Go Engine",
-    role: "Core microservices, Goroutines & channels",
+    subtitle: "Core Microservices",
+    role: "High-concurrency Goroutine worker pools, channel pipelines, and low-latency business logic.",
+    x: 250,
+    y: 190,
+    color: "#10b981",
+    glowColor: "rgba(16, 185, 129, 0.4)",
     category: "core",
-    position: [0, 0, 0],
-    color: "#10b981", // Emerald
+    icon: Cpu,
   },
   {
     id: "api",
     name: "gRPC & REST",
-    role: "High-throughput API Gateway & Rate Limiters",
+    subtitle: "API Gateway",
+    role: "High-throughput edge routing, token bucket rate limiters, and payload serialization.",
+    x: 100,
+    y: 85,
+    color: "#06b6d4",
+    glowColor: "rgba(6, 182, 212, 0.4)",
     category: "network",
-    position: [-2.2, 1.3, 0.4],
-    color: "#06b6d4", // Cyan
+    icon: Server,
   },
   {
     id: "mqtt",
     name: "MQTT / Kafka",
-    role: "Real-time streaming broker (Hermes GPS)",
+    subtitle: "Real-Time Telemetry",
+    role: "Lightweight IoT pub/sub broker handling Hermes teacher location packets with QoS 1 guarantees.",
+    x: 90,
+    y: 295,
+    color: "#38bdf8",
+    glowColor: "rgba(56, 189, 248, 0.4)",
     category: "network",
-    position: [-2.4, -1.2, -0.3],
-    color: "#38bdf8", // Sky
+    icon: Radio,
   },
   {
     id: "redis",
     name: "Redis Geo",
-    role: "Geospatial indexing & distributed pub/sub",
+    subtitle: "Sub-ms Spatial Cache",
+    role: "Geohash coordinate indexing (GEOADD), TR GlowCare slot reservation locks (SETNX), and pub/sub state.",
+    x: 400,
+    y: 85,
+    color: "#f43f5e",
+    glowColor: "rgba(244, 63, 94, 0.4)",
     category: "storage",
-    position: [2.3, 1.2, -0.2],
-    color: "#f43f5e", // Rose/Red
+    icon: Database,
   },
   {
     id: "postgres",
     name: "PostgreSQL",
-    role: "ACID transactions & relational schema",
+    subtitle: "ACID Persistence",
+    role: "Normalized schema, temporal indexing for verified attendance logs, and transactional order ledgers.",
+    x: 410,
+    y: 295,
+    color: "#818cf8",
+    glowColor: "rgba(129, 140, 248, 0.4)",
     category: "storage",
-    position: [2.4, -1.3, 0.3],
-    color: "#818cf8", // Indigo
+    icon: Layers,
   },
   {
     id: "infra",
-    name: "K8s & Cloud",
-    role: "Container orchestration & CI/CD",
+    name: "K8s & Docker",
+    subtitle: "Cloud Infrastructure",
+    role: "Containerized deployments, automatic health checks, and reproducible multi-tenant cloud topologies.",
+    x: 250,
+    y: 45,
+    color: "#a855f7",
+    glowColor: "rgba(168, 85, 247, 0.4)",
     category: "infra",
-    position: [0, 2.3, -0.4],
-    color: "#a855f7", // Purple
+    icon: Cloud,
   },
   {
     id: "workers",
     name: "Worker Pools",
-    role: "Async event batching & telemetry ingestion",
+    subtitle: "Async Pipelines",
+    role: "Bounded event consumers handling telemetry deduplication and batch clickstream flushes.",
+    x: 250,
+    y: 335,
+    color: "#34d399",
+    glowColor: "rgba(52, 211, 153, 0.4)",
     category: "core",
-    position: [0, -2.2, 0.2],
-    color: "#34d399", // Mint
+    icon: Zap,
   },
 ];
 
@@ -86,217 +127,189 @@ const CONNECTIONS: [string, string][] = [
   ["api", "redis"],
 ];
 
-function NodeMesh({
-  node,
-  isHovered,
-  onHover,
-  onUnhover,
-}: {
-  node: SystemNode;
-  isHovered: boolean;
-  onHover: () => void;
-  onUnhover: () => void;
-}) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const targetScale = isHovered ? 1.3 : node.category === "core" ? 1.15 : 1;
-
-  useFrame((_, delta) => {
-    if (meshRef.current) {
-      meshRef.current.scale.lerp(
-        new THREE.Vector3(targetScale, targetScale, targetScale),
-        Math.min(delta * 10, 1)
-      );
-    }
-  });
-
-  return (
-    <group position={node.position}>
-      <mesh
-        ref={meshRef}
-        onPointerOver={(e) => {
-          e.stopPropagation();
-          onHover();
-        }}
-        onPointerOut={() => onUnhover()}
-      >
-        <sphereGeometry args={[node.category === "core" ? 0.35 : 0.24, 24, 24]} />
-        <meshStandardMaterial
-          color={node.color}
-          emissive={node.color}
-          emissiveIntensity={isHovered ? 0.9 : 0.35}
-          roughness={0.2}
-          metalness={0.8}
-        />
-      </mesh>
-
-      {/* Orbit Ring for core */}
-      {node.category === "core" && (
-        <mesh rotation={[Math.PI / 3, 0, 0]}>
-          <ringGeometry args={[0.5, 0.54, 32]} />
-          <meshBasicMaterial
-            color="#34d399"
-            opacity={0.3}
-            transparent
-            side={THREE.DoubleSide}
-          />
-        </mesh>
-      )}
-
-      {/* Label */}
-      <Billboard follow lockX={false} lockY={false} lockZ={false}>
-        <Text
-          position={[0, -0.42, 0]}
-          fontSize={0.16}
-          color={isHovered ? "#ffffff" : "#94a3b8"}
-          anchorX="center"
-          anchorY="middle"
-        >
-          {node.name}
-        </Text>
-      </Billboard>
-    </group>
-  );
-}
-
-function ConnectionLines({
-  activeNodeId,
-}: {
-  activeNodeId: string | null;
-}) {
-  const nodeMap = useMemo(() => {
-    const map = new Map<string, [number, number, number]>();
-    NODES.forEach((n) => map.set(n.id, n.position));
-    return map;
-  }, []);
-
-  const lines = useMemo(() => {
-    return CONNECTIONS.map(([sourceId, targetId]) => {
-      const p1 = nodeMap.get(sourceId);
-      const p2 = nodeMap.get(targetId);
-      if (!p1 || !p2) return null;
-
-      const points = [new THREE.Vector3(...p1), new THREE.Vector3(...p2)];
-      const geometry = new THREE.BufferGeometry().setFromPoints(points);
-      const isConnected =
-        activeNodeId === sourceId || activeNodeId === targetId || activeNodeId === null;
-
-      return {
-        id: `${sourceId}-${targetId}`,
-        geometry,
-        isConnected,
-        isDirect: activeNodeId === sourceId || activeNodeId === targetId,
-      };
-    }).filter(Boolean);
-  }, [nodeMap, activeNodeId]);
-
-  return (
-    <group>
-      {lines.map((line) => {
-        if (!line) return null;
-        return (
-          <primitive key={line.id} object={new THREE.Line(
-            line.geometry,
-            new THREE.LineBasicMaterial({
-              color: line.isDirect ? "#34d399" : "#334155",
-              transparent: true,
-              opacity: line.isDirect ? 0.9 : activeNodeId ? 0.15 : 0.4,
-              linewidth: line.isDirect ? 2 : 1,
-            })
-          )} />
-        );
-      })}
-    </group>
-  );
-}
-
-function RotatingSystem({
-  activeNodeId,
-  setActiveNodeId,
-}: {
-  activeNodeId: string | null;
-  setActiveNodeId: (id: string | null) => void;
-}) {
-  const groupRef = useRef<THREE.Group>(null);
-
-  useFrame(({ pointer }) => {
-    if (groupRef.current) {
-      // Gentle cursor-driven tilt
-      groupRef.current.rotation.y = THREE.MathUtils.lerp(
-        groupRef.current.rotation.y,
-        pointer.x * 0.35,
-        0.05
-      );
-      groupRef.current.rotation.x = THREE.MathUtils.lerp(
-        groupRef.current.rotation.x,
-        -pointer.y * 0.25,
-        0.05
-      );
-    }
-  });
-
-  return (
-    <group ref={groupRef}>
-      <Float speed={1.2} rotationIntensity={0.2} floatIntensity={0.4}>
-        <ConnectionLines activeNodeId={activeNodeId} />
-
-        {NODES.map((node) => (
-          <NodeMesh
-            key={node.id}
-            node={node}
-            isHovered={activeNodeId === node.id}
-            onHover={() => setActiveNodeId(node.id)}
-            onUnhover={() => setActiveNodeId(null)}
-          />
-        ))}
-      </Float>
-    </group>
-  );
-}
-
 export function TechNetwork() {
-  const [activeNodeId, setActiveNodeId] = useState<string | null>(null);
+  const [activeNodeId, setActiveNodeId] = useState<string>("core");
 
-  const activeNode = useMemo(() => {
-    return NODES.find((n) => n.id === activeNodeId);
-  }, [activeNodeId]);
+  const activeNode = NODES.find((n) => n.id === activeNodeId) || NODES[0];
+
+  const getNode = (id: string) => NODES.find((n) => n.id === id);
 
   return (
-    <div className="relative w-full h-full flex items-center justify-center">
-      <Canvas
-        camera={{ position: [0, 0, 6.2], fov: 48 }}
-        dpr={[1, 1.5]}
-        gl={{ antialias: true, alpha: true }}
-        style={{ pointerEvents: "auto" }}
-      >
-        <ambientLight intensity={0.8} />
-        <pointLight position={[10, 10, 10]} intensity={1.5} color="#10b981" />
-        <pointLight position={[-10, -10, -10]} intensity={0.8} color="#06b6d4" />
-        <RotatingSystem
-          activeNodeId={activeNodeId}
-          setActiveNodeId={setActiveNodeId}
-        />
-      </Canvas>
+    <div className="relative w-full h-full flex flex-col items-center justify-between p-4 select-none bg-transparent">
+      {/* Interactive Topology Visualizer */}
+      <div className="relative w-full max-w-[480px] aspect-[500/380] flex items-center justify-center">
+        <svg
+          viewBox="0 0 500 380"
+          className="w-full h-full overflow-visible"
+          fill="none"
+        >
+          <defs>
+            <filter id="nodeGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="6" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
 
-      {/* Floating System HUD Tooltip */}
-      <div className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:bottom-6 md:w-80 pointer-events-none transition-all duration-300">
-        <div className="glass-panel p-3.5 rounded-xl border border-slate-700/50 shadow-2xl">
+            <linearGradient id="edgeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#10b981" stopOpacity="0.8" />
+              <stop offset="50%" stopColor="#06b6d4" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#818cf8" stopOpacity="0.8" />
+            </linearGradient>
+          </defs>
+
+          {/* Connection Lines */}
+          {CONNECTIONS.map(([src, dst]) => {
+            const p1 = getNode(src);
+            const p2 = getNode(dst);
+            if (!p1 || !p2) return null;
+
+            const isHighlighted =
+              activeNodeId === src || activeNodeId === dst;
+
+            return (
+              <g key={`${src}-${dst}`}>
+                {/* Background base wire */}
+                <line
+                  x1={p1.x}
+                  y1={p1.y}
+                  x2={p2.x}
+                  y2={p2.y}
+                  stroke={isHighlighted ? "url(#edgeGrad)" : "#1e293b"}
+                  strokeWidth={isHighlighted ? 2.5 : 1}
+                  strokeDasharray={isHighlighted ? "none" : "3 3"}
+                  className="transition-all duration-300"
+                />
+
+                {/* Animated traveling data packet */}
+                {isHighlighted && (
+                  <circle r="3" fill="#34d399" filter="url(#nodeGlow)">
+                    <animateMotion
+                      path={`M ${p1.x} ${p1.y} L ${p2.x} ${p2.y}`}
+                      dur="2.2s"
+                      repeatCount="indefinite"
+                    />
+                  </circle>
+                )}
+              </g>
+            );
+          })}
+
+          {/* Core rotating orbit ring for the central Go Engine */}
+          <g transform="translate(250, 190)">
+            <circle
+              r="46"
+              fill="none"
+              stroke="#10b981"
+              strokeWidth="1.2"
+              strokeDasharray="4 6"
+              opacity="0.35"
+              className="animate-spin"
+              style={{ animationDuration: "16s" }}
+            />
+          </g>
+
+          {/* Nodes */}
+          {NODES.map((node) => {
+            const isSelected = activeNodeId === node.id;
+            const isCore = node.category === "core";
+            const radius = isCore ? 26 : 21;
+            const Icon = node.icon;
+
+            return (
+              <g
+                key={node.id}
+                onClick={() => setActiveNodeId(node.id)}
+                onMouseEnter={() => setActiveNodeId(node.id)}
+                className="cursor-pointer"
+              >
+                {/* Outer Glow on hover */}
+                {isSelected && (
+                  <circle
+                    cx={node.x}
+                    cy={node.y}
+                    r={radius + 8}
+                    fill="none"
+                    stroke={node.color}
+                    strokeWidth="1.5"
+                    opacity="0.6"
+                    className="animate-pulse"
+                  />
+                )}
+
+                {/* Node Circle */}
+                <circle
+                  cx={node.x}
+                  cy={node.y}
+                  r={radius}
+                  fill="#0d121d"
+                  stroke={isSelected ? node.color : "#334155"}
+                  strokeWidth={isSelected ? 2.5 : 1.5}
+                  filter={isSelected ? "url(#nodeGlow)" : undefined}
+                  className="transition-colors duration-200"
+                />
+
+                {/* Center dot / Accent */}
+                <circle
+                  cx={node.x}
+                  cy={node.y}
+                  r={isSelected ? 10 : 7}
+                  fill={node.color}
+                  opacity={isSelected ? 0.9 : 0.4}
+                  className="transition-all duration-200"
+                />
+
+                {/* Node Label */}
+                <text
+                  x={node.x}
+                  y={node.y + radius + 15}
+                  textAnchor="middle"
+                  fill={isSelected ? "#ffffff" : "#94a3b8"}
+                  fontSize={isCore ? "11.5" : "10"}
+                  fontFamily="ui-monospace, monospace"
+                  fontWeight={isSelected ? "700" : "500"}
+                  className="transition-colors duration-200 pointer-events-none"
+                >
+                  {node.name}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+
+      {/* Floating System HUD Tooltip Card */}
+      <div className="w-full mt-2 transition-all duration-300">
+        <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 backdrop-blur-xl shadow-xl">
           <div className="flex items-center justify-between mb-1.5">
             <span className="text-[11px] font-mono tracking-wider uppercase text-emerald-400 font-semibold flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-              Live Architecture Topology
+              Live Topology Inspector
             </span>
-            <span className="text-[10px] font-mono text-slate-400">
-              Interactive WebGL
+            <span className="text-[10px] font-mono text-slate-500">
+              Interactive Architecture
             </span>
           </div>
-          <p className="text-xs font-semibold text-slate-200">
-            {activeNode ? activeNode.name : "Hover nodes to inspect topology"}
+
+          <div className="flex items-center gap-2 mb-1">
+            <div
+              className="w-2.5 h-2.5 rounded-full"
+              style={{ backgroundColor: activeNode.color }}
+            />
+            <h4 className="text-xs sm:text-sm font-bold text-white">
+              {activeNode.name}
+            </h4>
+            <span className="text-[10px] font-mono text-slate-400">
+              ({activeNode.subtitle})
+            </span>
+          </div>
+
+          <p className="text-[11px] sm:text-xs text-slate-300 leading-relaxed">
+            {activeNode.role}
           </p>
-          <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
-            {activeNode
-              ? activeNode.role
-              : "Distributed microservices, low-latency caches, and real-time streaming pipelines engineered in Go."}
-          </p>
+
+          <div className="mt-2.5 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] font-mono text-slate-500">
+            <span>Click or hover any node to inspect</span>
+            <span className="text-emerald-400">Status: HEALTHY_ONLINE</span>
+          </div>
         </div>
       </div>
     </div>

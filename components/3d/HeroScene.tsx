@@ -5,7 +5,7 @@ import { TechNetwork } from "./TechNetwork";
 
 export function HeroScene() {
   return (
-    <div className="w-full h-full min-h-[420px] md:min-h-[520px] flex items-center justify-center">
+    <div className="w-full flex items-start justify-center lg:justify-end">
       <TechNetwork />
     </div>
   );

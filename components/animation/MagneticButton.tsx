@@ -27,10 +27,20 @@ export function MagneticButton({
   const x = useSpring(0, springConfig);
   const y = useSpring(0, springConfig);
 
+  const rectRef = useRef<{ left: number; top: number; width: number; height: number } | null>(null);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    if (ref.current) {
+      const { left, top, width, height } = ref.current.getBoundingClientRect();
+      rectRef.current = { left, top, width, height };
+    }
+  };
+
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (prefersReducedMotion || !ref.current) return;
+    if (prefersReducedMotion || !rectRef.current) return;
     const { clientX, clientY } = e;
-    const { left, top, width, height } = ref.current.getBoundingClientRect();
+    const { left, top, width, height } = rectRef.current;
     const centerX = left + width / 2;
     const centerY = top + height / 2;
     const deltaX = (clientX - centerX) * strength;
@@ -39,12 +49,9 @@ export function MagneticButton({
     y.set(deltaY);
   };
 
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
-
   const handleMouseLeave = () => {
     setIsHovered(false);
+    rectRef.current = null;
     x.set(0);
     y.set(0);
   };

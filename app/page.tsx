@@ -1,5 +1,6 @@
 import React from "react";
 import { Hero } from "@/components/sections/Hero";
+import { TechStack } from "@/components/sections/TechStack";
 import { FeaturedProjects } from "@/components/sections/FeaturedProjects";
 import { EngineeringPlayground } from "@/components/sections/EngineeringPlayground";
 import { UrlShortenerDemo } from "@/components/sections/UrlShortenerDemo";
@@ -8,11 +9,14 @@ import { Contact } from "@/components/sections/Contact";
 
 export default function HomePage() {
   return (
-    <main className="relative flex flex-col min-h-screen bg-[#07090e] text-slate-100 overflow-hidden">
-      {/* 1. Hero Section with 3D Tech Network */}
+    <main className="relative flex flex-col min-h-screen bg-[#050816] text-slate-100 overflow-hidden">
+      {/* 1. Hero Section with 3D Tech Network & Focused Primary Preview */}
       <Hero />
 
-      {/* 2. Featured Engineering Projects (Hermes, TR GlowCare, URL Shortener) */}
+      {/* 2. Dedicated Tech Stack Section (Tools I use to build and ship) */}
+      <TechStack />
+
+      {/* 3. Featured Engineering Projects (Hermes, TR GlowCare, URL Shortener) */}
       <FeaturedProjects />
 
       {/* 3. Under-the-Hood Engineering Playground */}

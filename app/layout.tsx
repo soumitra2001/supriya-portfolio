@@ -43,8 +43,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark scroll-smooth">
-      <body className="bg-[#07090e] text-slate-100 min-h-screen flex flex-col antialiased selection:bg-emerald-500/20 selection:text-emerald-300">
+    <html lang="en" className="dark scroll-smooth" suppressHydrationWarning>
+      <body
+        suppressHydrationWarning
+        className="bg-[#07090e] text-slate-100 min-h-screen flex flex-col antialiased selection:bg-emerald-500/20 selection:text-emerald-300"
+      >
         <SmoothScroll>
           {/* Custom Trailing Spring Cursor (Desktop only) */}
           <CustomCursor />

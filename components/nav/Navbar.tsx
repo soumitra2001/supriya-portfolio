@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import { Menu, X, Download } from "lucide-react";
 
@@ -53,21 +54,31 @@ export function Navbar() {
             : "bg-transparent py-5"
         }`}
       >
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          {/* Left: Brand Avatar & Name with Subtle Accent */}
+        <div className="relative w-full px-4 sm:px-6 lg:px-8 xl:px-10 flex items-center justify-between">
+          {/* Left: Brand Avatar & Name with Subtitle */}
           <Link
             href="/"
             aria-label="Home"
-            className="group flex items-center gap-2.5 focus:outline-none z-10"
+            className="group flex items-center gap-2.5 sm:gap-3 focus:outline-none z-10"
           >
-            <div className="w-8 h-8 rounded-full bg-gradient-to-b from-slate-800/90 to-slate-900/90 border border-slate-700/80 flex items-center justify-center text-slate-200 font-medium text-sm shadow-sm group-hover:border-cyan-500/40 transition-all duration-300">
-              <span>S</span>
+            {/* Top Left Profile Icon - Option 2: Neon Ring */}
+            <div className="relative w-10 h-10 rounded-full p-[2px] bg-gradient-to-br from-sky-400 via-blue-500 to-purple-500 shadow-[0_0_18px_rgba(56,189,248,0.45),0_0_22px_rgba(192,132,252,0.4)] group-hover:shadow-[0_0_26px_rgba(56,189,248,0.65),0_0_32px_rgba(192,132,252,0.6)] transition-all duration-300 shrink-0">
+              <div className="w-full h-full rounded-full bg-[#050816] flex items-center justify-center relative overflow-hidden">
+                {/* Center ambient glow */}
+                <div className="absolute inset-1 rounded-full bg-gradient-to-br from-sky-500/15 to-purple-500/20 blur-[5px] pointer-events-none" />
+                {/* Center letter S */}
+                <span className="relative z-10 text-white font-extrabold text-base tracking-tight font-sans leading-none select-none drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+                  S
+                </span>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-slate-200 tracking-tight group-hover:text-white transition-colors">
+            <div className="flex flex-col text-left">
+              <span className="text-sm font-semibold text-slate-100 tracking-tight group-hover:text-white transition-colors leading-tight">
                 Supriya Ghorai
               </span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/40" />
+              <span className="text-[11px] font-medium text-slate-400 tracking-normal leading-tight mt-0.5">
+                Software Developer
+              </span>
             </div>
           </Link>
 

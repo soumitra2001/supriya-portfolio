@@ -209,7 +209,7 @@ const PROJECTS: ProjectItem[] = [
     description:
       "Explore more of my open-source systems, developer tooling, distributed backend architectures, microservice prototypes, and performance experiments on GitHub.",
     technologies: [],
-    link: "https://github.com/supriyaghorai",
+    link: "https://github.com/soumitra2001",
     isExternal: true,
     categories: ["all", "featured"],
     thumbnailType: "custom",

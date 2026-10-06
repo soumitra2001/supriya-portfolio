@@ -28,6 +28,15 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
   },
+  icons: {
+    icon: [
+      { url: "/icon.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    shortcut: "/icon.png",
+    apple: "/apple-icon.png",
+  },
 };
 
 export const viewport: Viewport = {

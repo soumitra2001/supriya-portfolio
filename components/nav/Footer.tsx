@@ -24,7 +24,7 @@ export function Footer() {
         {/* Center: Clean Professional Links */}
         <div className="flex items-center gap-6 whitespace-nowrap text-slate-400">
           <a
-            href="https://github.com/supriyaghorai"
+            href="https://github.com/soumitra2001"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-emerald-400 transition-colors"
@@ -32,7 +32,7 @@ export function Footer() {
             GitHub
           </a>
           <a
-            href="https://linkedin.com"
+            href="https://www.linkedin.com/in/itsmesupriya"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-cyan-400 transition-colors"

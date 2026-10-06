@@ -168,7 +168,7 @@ export function TechNetwork() {
         {/* ============================================================ */}
         <svg
           viewBox="0 0 680 453"
-          className="absolute inset-0 w-full h-full pointer-events-none z-20 overflow-visible"
+          className="hidden md:block absolute inset-0 w-full h-full pointer-events-none z-20 overflow-visible"
           fill="none"
           style={{ transform: "translateZ(25px)" }}
         >
@@ -303,7 +303,7 @@ export function TechNetwork() {
             ease: "easeInOut",
           }}
           style={{ transform: "translateZ(40px)" }}
-          className="absolute top-2 sm:top-3 left-1 sm:left-2 z-30 group cursor-pointer"
+          className="hidden md:block absolute top-2 sm:top-3 left-1 sm:left-2 z-30 group cursor-pointer"
         >
           <div className="relative flex items-center gap-2.5 px-3 py-2 rounded-2xl bg-[#060b1e]/85 backdrop-blur-xl border border-sky-500/30 hover:border-sky-400/60 shadow-[0_8px_25px_rgba(0,0,0,0.6)] hover:shadow-[0_8px_25px_rgba(56,189,248,0.22)] transition-all duration-300">
             {/* Cute Gopher Container */}
@@ -345,7 +345,7 @@ export function TechNetwork() {
             ease: "easeInOut",
           }}
           style={{ transform: "translateZ(38px)" }}
-          className="absolute bottom-2 sm:bottom-3 left-1 sm:left-2 z-30 group cursor-pointer"
+          className="hidden md:block absolute bottom-2 sm:bottom-3 left-1 sm:left-2 z-30 group cursor-pointer"
         >
           <div className="relative p-3 rounded-2xl bg-[#060b1e]/90 backdrop-blur-xl border border-amber-500/30 hover:border-amber-400/60 shadow-[0_8px_25px_rgba(0,0,0,0.65)] hover:shadow-[0_8px_25px_rgba(245,158,11,0.2)] transition-all duration-300">
             {/* macOS Window Controls */}
@@ -397,7 +397,7 @@ export function TechNetwork() {
             ease: "easeInOut",
           }}
           style={{ transform: "translateZ(40px)" }}
-          className="absolute top-2 sm:top-3 right-1 sm:right-2 z-30 group cursor-pointer"
+          className="hidden md:block absolute top-2 sm:top-3 right-1 sm:right-2 z-30 group cursor-pointer"
         >
           <div className="relative flex items-center gap-2.5 px-3 py-2 rounded-2xl bg-[#060b1e]/85 backdrop-blur-xl border border-sky-500/30 hover:border-sky-400/60 shadow-[0_8px_25px_rgba(0,0,0,0.6)] hover:shadow-[0_8px_25px_rgba(56,189,248,0.22)] transition-all duration-300">
             <div className="w-9 h-9 rounded-xl bg-sky-500/15 border border-sky-400/40 flex items-center justify-center shrink-0">

@@ -3,7 +3,6 @@ import { Hero } from "@/components/sections/Hero";
 import { TechStack } from "@/components/sections/TechStack";
 import { FeaturedProjects } from "@/components/sections/FeaturedProjects";
 import { EngineeringPlayground } from "@/components/sections/EngineeringPlayground";
-import { UrlShortenerDemo } from "@/components/sections/UrlShortenerDemo";
 import { About } from "@/components/sections/About";
 import { Contact } from "@/components/sections/Contact";
 
@@ -19,11 +18,8 @@ export default function HomePage() {
       {/* 3. Featured Engineering Projects (Hermes, TR GlowCare, URL Shortener) */}
       <FeaturedProjects />
 
-      {/* 3. Under-the-Hood Engineering Playground */}
+      {/* 4. Under-the-Hood Engineering Playground */}
       <EngineeringPlayground />
-
-      {/* 4. Live Interactive URL Shortener Demo */}
-      <UrlShortenerDemo />
 
       {/* 5. About & Core Principles */}
       <About />

@@ -8,7 +8,7 @@ import { HeroScene } from "@/components/3d/HeroScene";
 import { FlipWords } from "@/components/ui/FlipWords";
 import { BorderBeam } from "@/components/ui/BorderBeam";
 import { GridBeam } from "@/components/ui/GridBeam";
-import { ArrowRight, Download, Mail, Briefcase, Code, Cloud, Box } from "lucide-react";
+import { ArrowRight, Download, Mail, Briefcase, Code, Cloud, Box, Zap, Share2 } from "lucide-react";
 
 const ROTATING_HEADLINES = [
   {
@@ -190,39 +190,62 @@ export function Hero() {
             {/* Bio Description - spacious & authoritative */}
             <FadeIn delay={0.35} direction="up" distance={20}>
               <p className="text-sm sm:text-[15px] xl:text-base text-slate-300/90 leading-relaxed max-w-xl mb-5">
-                Backend engineer with 2+ years of experience engineering scalable systems, high-throughput APIs, and real-time distributed pipelines. Focused on clean architecture, resiliency, and performance.
+                Backend engineer with 3+ years of experience engineering scalable systems, high-throughput APIs, and real-time distributed pipelines. Focused on clean architecture, resiliency, and performance.
               </p>
             </FadeIn>
 
-            {/* Key Technical Focus Badges */}
+            {/* Key Technical Focus Badges (All on Same Single Line) */}
             <FadeIn delay={0.4} direction="up" distance={15}>
-              <div className="flex flex-wrap items-center gap-2 mb-7 text-xs font-mono">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-sky-500/10 border border-sky-500/25 text-sky-300">
-                  <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
-                  High-Throughput APIs
+              <div className="flex flex-nowrap items-center gap-2 sm:gap-2.5 mb-7 overflow-x-auto no-scrollbar py-0.5 max-w-full">
+                {/* High-Throughput APIs */}
+                <span className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl bg-sky-500/10 border border-sky-500/30 text-sky-300 text-[11px] sm:text-xs font-semibold whitespace-nowrap shadow-[0_0_12px_rgba(14,165,233,0.12)] hover:border-sky-400/50 hover:bg-sky-500/15 transition-all shrink-0">
+                  <Zap className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+                  <span>High-Throughput APIs</span>
                 </span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-purple-500/10 border border-purple-500/25 text-purple-300">
-                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
-                  Distributed Systems
+
+                {/* Distributed Systems */}
+                <span className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-300 text-[11px] sm:text-xs font-semibold whitespace-nowrap shadow-[0_0_12px_rgba(168,85,247,0.12)] hover:border-purple-400/50 hover:bg-purple-500/15 transition-all shrink-0">
+                  <Share2 className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+                  <span>Distributed Systems</span>
                 </span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-teal-500/10 border border-teal-500/25 text-teal-300">
-                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400" />
-                  Event-Driven Architecture
+
+                {/* Event-Driven Architecture */}
+                <span className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-300 text-[11px] sm:text-xs font-semibold whitespace-nowrap shadow-[0_0_12px_rgba(20,184,166,0.12)] hover:border-teal-400/50 hover:bg-teal-500/15 transition-all shrink-0">
+                  <Box className="w-3.5 h-3.5 text-teal-400 shrink-0" />
+                  <span>Event-Driven Architecture</span>
                 </span>
               </div>
             </FadeIn>
 
-            {/* CTA Buttons with Magic UI BorderBeam & Shimmer Effect */}
+            {/* CTA Buttons */}
             <FadeIn delay={0.45} direction="up" distance={15}>
               <div className="flex flex-wrap items-center gap-3.5 mb-8">
-                <MagneticButton strength={0.25}>
+                <MagneticButton strength={0.25} className="relative">
                   <Link
                     href="#projects"
-                    className="relative overflow-hidden inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold text-xs sm:text-sm text-white bg-gradient-to-r from-[#6366f1] via-[#3b82f6] to-[#06b6d4] hover:from-[#4f46e5] hover:to-[#0891b2] transition-all duration-300 shadow-[0_4px_25px_rgba(59,130,246,0.45)] hover:shadow-[0_6px_30px_rgba(59,130,246,0.6)] group"
+                    className="glass-cta-btn group relative inline-flex items-center gap-4 rounded-full select-none"
                   >
-                    <BorderBeam size={55} duration={4.5} borderWidth={1.5} colorFrom="#38bdf8" colorTo="#c084fc" />
-                    <span>View My Work</span>
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                    {/* Animated moving spark travelling around the button border */}
+                    <BorderBeam
+                      size={60}
+                      duration={3.5}
+                      borderWidth={1.5}
+                      colorFrom="#ffffff"
+                      colorTo="#38bdf8"
+                    />
+
+                    {/* Subtle diagonal glass refraction */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.05] to-transparent pointer-events-none" />
+
+                    {/* Button text */}
+                    <span className="relative z-10 text-sm font-semibold tracking-normal text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
+                      View My Work
+                    </span>
+
+                    {/* Luminous purple-cyan glass arrow badge */}
+                    <div className="glass-cta-arrow relative z-10">
+                      <ArrowRight className="w-4 h-4 text-white stroke-[2.4] group-hover:translate-x-0.5 transition-transform duration-200" />
+                    </div>
                   </Link>
                 </MagneticButton>
 
@@ -236,9 +259,9 @@ export function Hero() {
                         el.scrollIntoView({ behavior: "smooth" });
                       }
                     }}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium text-xs sm:text-sm text-slate-200 bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 hover:border-cyan-500/50 hover:shadow-[0_0_15px_rgba(56,189,248,0.2)] backdrop-blur-xl transition-all shadow-sm group"
+                    className="inline-flex items-center h-12 gap-2 px-6 rounded-xl sm:rounded-2xl font-medium text-sm text-slate-200 bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 hover:border-cyan-500/50 hover:shadow-[0_0_15px_rgba(56,189,248,0.2)] backdrop-blur-xl transition-all shadow-sm group"
                   >
-                    <Download className="w-3.5 h-3.5 text-slate-400 group-hover:text-cyan-400 group-hover:translate-y-0.5 transition-all" />
+                    <Download className="w-4 h-4 text-slate-400 group-hover:text-cyan-400 group-hover:translate-y-0.5 transition-all" />
                     <span>Download Resume</span>
                   </a>
                 </MagneticButton>
@@ -249,7 +272,7 @@ export function Hero() {
             <FadeIn delay={0.55} direction="up" distance={15}>
               <div className="flex items-center gap-2.5">
                 <a
-                  href="https://github.com"
+                  href="https://github.com/soumitra2001"
                   target="_blank"
                   rel="noreferrer"
                   aria-label="GitHub Profile"
@@ -259,7 +282,7 @@ export function Hero() {
                 </a>
 
                 <a
-                  href="https://linkedin.com"
+                  href="https://www.linkedin.com/in/itsmesupriya"
                   target="_blank"
                   rel="noreferrer"
                   aria-label="LinkedIn Profile"
@@ -269,7 +292,7 @@ export function Hero() {
                 </a>
 
                 <a
-                  href="https://x.com"
+                  href="https://x.com/SUPRIYAGHORAI01"
                   target="_blank"
                   rel="noreferrer"
                   aria-label="X (Twitter) Profile"
@@ -319,7 +342,7 @@ export function Hero() {
                 <Briefcase className="w-4 h-4" />
               </div>
               <div>
-                <div className="text-lg sm:text-xl font-black text-white leading-tight">2+</div>
+                <div className="text-lg sm:text-xl font-black text-white leading-tight">3+</div>
                 <div className="text-[11px] text-slate-400 font-medium">Years of Experience</div>
               </div>
             </div>

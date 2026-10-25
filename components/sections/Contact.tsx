@@ -38,22 +38,37 @@ export function Contact() {
     setErrorMessage(null);
 
     try {
-      const response = await fetch("/api/contact", {
+      // Direct AJAX delivery to FormSubmit from the client browser
+      // Avoids datacenter IP blocking that occurs when proxying through serverless cloud functions
+      const response = await fetch(`https://formsubmit.co/ajax/${emailAddress}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Accept: "application/json",
         },
         body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          message: formData.message,
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          message: formData.message.trim(),
+          _subject: `[Portfolio Inquiry] New message from ${formData.name.trim()}`,
+          _template: "table",
+          _captcha: "false",
         }),
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => null);
+      const isSuccess = data?.success === true || data?.success === "true";
 
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || "Failed to dispatch message.");
+      if (!response.ok || !isSuccess) {
+        const isActivationNeeded =
+          typeof data?.message === "string" &&
+          data.message.toLowerCase().includes("activation");
+
+        throw new Error(
+          isActivationNeeded
+            ? `Action required: FormSubmit has sent a 1-time activation link to ${emailAddress} for this domain. Please check your inbox (or spam) and click 'Activate Form' once. Afterwards, all messages will deliver directly!`
+            : data?.message || "Failed to dispatch message to email service."
+        );
       }
 
       setFormSubmitted(true);

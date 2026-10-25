@@ -29,6 +29,10 @@ export async function POST(request: Request) {
     }
 
     const targetEmail = "supriyaghorai.dev@gmail.com";
+    const origin =
+      request.headers.get("origin") ||
+      request.headers.get("referer") ||
+      "https://supriya-portfolio-eight.vercel.app";
 
     // Forward to FormSubmit AJAX endpoint for direct inbox delivery
     const response = await fetch(`https://formsubmit.co/ajax/${targetEmail}`, {
@@ -36,8 +40,8 @@ export async function POST(request: Request) {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Origin: "https://supriyaghorai.dev",
-        Referer: "https://supriyaghorai.dev",
+        Origin: origin,
+        Referer: origin,
       },
       body: JSON.stringify({
         name: name.trim(),

@@ -251,14 +251,10 @@ export function Hero() {
 
                 <MagneticButton strength={0.2}>
                   <a
-                    href="#resume"
-                    onClick={(e) => {
-                      const el = document.getElementById("contact");
-                      if (el) {
-                        e.preventDefault();
-                        el.scrollIntoView({ behavior: "smooth" });
-                      }
-                    }}
+                    href="/Supriya_Ghorai_Resume.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download="Supriya_Ghorai_Resume.pdf"
                     className="inline-flex items-center h-12 gap-2 px-6 rounded-xl sm:rounded-2xl font-medium text-sm text-slate-200 bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 hover:border-cyan-500/50 hover:shadow-[0_0_15px_rgba(56,189,248,0.2)] backdrop-blur-xl transition-all shadow-sm group"
                   >
                     <Download className="w-4 h-4 text-slate-400 group-hover:text-cyan-400 group-hover:translate-y-0.5 transition-all" />

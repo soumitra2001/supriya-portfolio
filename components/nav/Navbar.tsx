@@ -112,14 +112,10 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-3 z-10">
             {/* Resume Button */}
             <a
-              href="#resume"
-              onClick={(e) => {
-                const el = document.getElementById("contact");
-                if (el) {
-                  e.preventDefault();
-                  el.scrollIntoView({ behavior: "smooth" });
-                }
-              }}
+              href="/Supriya_Ghorai_Resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              download="Supriya_Ghorai_Resume.pdf"
               className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold text-slate-200 bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 hover:border-slate-500 hover:text-white transition-all shadow-sm shadow-black/20"
             >
               <Download className="w-3.5 h-3.5" />
@@ -165,15 +161,11 @@ export function Navbar() {
               ))}
               <div className="pt-3 mt-1 border-t border-slate-800 flex items-center justify-end">
                 <a
-                  href="#resume"
-                  onClick={(e) => {
-                    setMobileOpen(false);
-                    const el = document.getElementById("contact");
-                    if (el) {
-                      e.preventDefault();
-                      el.scrollIntoView({ behavior: "smooth" });
-                    }
-                  }}
+                  href="/Supriya_Ghorai_Resume.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  download="Supriya_Ghorai_Resume.pdf"
+                  onClick={() => setMobileOpen(false)}
                   className="flex items-center justify-center gap-1.5 px-5 py-2 rounded-full text-xs font-semibold bg-slate-900 border border-slate-700/80 text-white hover:border-cyan-500 transition-colors"
                 >
                   <Download className="w-3.5 h-3.5" />

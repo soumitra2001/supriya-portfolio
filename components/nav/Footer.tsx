@@ -39,6 +39,15 @@ export function Footer() {
           >
             LinkedIn
           </a>
+          <a
+            href="/Supriya_Ghorai_Resume.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            download="Supriya_Ghorai_Resume.pdf"
+            className="hover:text-cyan-400 transition-colors"
+          >
+            Resume
+          </a>
           <Link
             href="/#contact"
             className="hover:text-white transition-colors"

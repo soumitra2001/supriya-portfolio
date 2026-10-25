@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { FadeIn } from "@/components/animation/FadeIn";
 import { RevealText } from "@/components/animation/RevealText";
 import { MagneticButton } from "@/components/animation/MagneticButton";
 import {
@@ -9,15 +8,21 @@ import {
   Check,
   Copy,
   Send,
-  ArrowUpRight,
-  Radio,
+  Loader2,
+  ExternalLink,
+  AlertCircle,
+  FileText,
+  Download,
 } from "lucide-react";
 
 export function Contact() {
   const [copied, setCopied] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
-  const emailAddress = "supriya.ghorai@example.com"; // Placeholder until user provides exact address
+
+  const emailAddress = "supriyaghorai.dev@gmail.com";
 
   const handleCopy = () => {
     navigator.clipboard.writeText(emailAddress);
@@ -25,11 +30,49 @@ export function Contact() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) return;
-    setFormSubmitted(true);
+
+    setIsSubmitting(true);
+    setErrorMessage(null);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || "Failed to dispatch message.");
+      }
+
+      setFormSubmitted(true);
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "An unexpected error occurred. Please try again or email me directly.";
+      setErrorMessage(message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  const fallbackMailto = `mailto:${emailAddress}?subject=${encodeURIComponent(
+    `Inquiry from ${formData.name || "Portfolio Visitor"}`
+  )}&body=${encodeURIComponent(
+    `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
+  )}`;
 
   return (
     <section id="contact" className="py-24 relative border-t border-slate-800/60 tech-dot-bg">
@@ -46,41 +89,89 @@ export function Contact() {
               <RevealText text="Let’s engineer something exceptional." as="span" />
             </h2>
 
-            <p className="text-sm sm:text-base text-slate-300 leading-relaxed mb-8 max-w-lg">
-              Whether you are building high-throughput distributed systems, real-time IoT pipelines, or scalable digital products—I’m always open to discussing technical architecture and senior engineering roles.
+            <p className="text-sm sm:text-base text-slate-300 leading-relaxed mb-6 max-w-lg">
+              I specialize in architecting high-throughput backend systems, distributed microservices, and resilient event-driven pipelines in Go. Whether you are solving scaling bottlenecks, looking for a senior backend engineer, or discussing system architecture—I’m always open to connecting.
             </p>
 
             {/* Quick Email Direct Card */}
-            <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-between gap-4 mb-8 max-w-md">
+            <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-3 max-w-lg">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-slate-950 border border-slate-800 text-emerald-400">
+                <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-emerald-400 shrink-0">
                   <Mail className="w-4 h-4" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <div className="text-[11px] font-mono text-slate-400">Direct Email</div>
-                  <div className="text-xs sm:text-sm font-semibold text-slate-200 font-mono">
+                  <a
+                    href={`mailto:${emailAddress}`}
+                    className="text-xs sm:text-sm font-semibold text-slate-200 font-mono hover:text-emerald-400 transition-colors truncate block"
+                    title="Send email via mail client"
+                  >
                     {emailAddress}
+                  </a>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <a
+                  href={`mailto:${emailAddress}`}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors"
+                  title="Open default email client"
+                >
+                  <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Email</span>
+                </a>
+
+                <button
+                  type="button"
+                  onClick={handleCopy}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors cursor-pointer"
+                  title="Copy email to clipboard"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-400" />
+                      <span className="text-emerald-400">Copied</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5 text-slate-400" />
+                      <span>Copy</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Resume Download Card */}
+            <div
+              id="resume"
+              className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 max-w-lg scroll-mt-24"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-cyan-400 shrink-0">
+                  <FileText className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-[11px] font-mono text-slate-400">Curriculum Vitae</div>
+                  <div className="text-xs sm:text-sm font-semibold text-slate-200 font-mono">
+                    Supriya Ghorai — Resume (PDF)
                   </div>
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={handleCopy}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors"
-              >
-                {copied ? (
-                  <>
-                    <Check className="w-3.5 h-3.5 text-emerald-400" />
-                    <span className="text-emerald-400">Copied</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-3.5 h-3.5" />
-                    <span>Copy</span>
-                  </>
-                )}
-              </button>
+              <div className="flex items-center gap-2 shrink-0">
+                <a
+                  href="/Supriya_Ghorai_Resume.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  download="Supriya_Ghorai_Resume.pdf"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-mono bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition-all hover:border-cyan-400/50 shadow-sm"
+                  title="Download Resume PDF"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download</span>
+                </a>
+              </div>
             </div>
 
             {/* Social Links */}
@@ -122,30 +213,39 @@ export function Contact() {
                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                   </svg>
                 </a>
+                <a
+                  href={`mailto:${emailAddress}`}
+                  className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-emerald-400 hover:border-slate-700 transition-all hover:scale-105"
+                  aria-label="Direct Email"
+                  title="Direct Email"
+                >
+                  <Mail className="w-4 h-4" />
+                </a>
               </div>
             </div>
           </div>
 
-          {/* Right: Interactive Message Box */}
+          {/* Right: Interactive Message Box with Functional Backend Delivery */}
           <div className="lg:col-span-6">
-            <div className="rounded-2xl bg-slate-900/90 border border-slate-800 p-6 sm:p-8 backdrop-blur-xl shadow-2xl">
+            <div className="rounded-2xl bg-slate-900/90 border border-slate-800 p-6 sm:p-8 backdrop-blur-xl shadow-2xl relative">
               <h3 className="text-base font-semibold text-white mb-2">
                 Send Direct Message
               </h3>
-              <p className="text-xs text-slate-400 mb-6">
-                Your message routes directly to my primary inbox.
+              <p className="text-xs text-slate-400 mb-6 flex items-center gap-1.5">
+                <span>Routes directly to</span>
+                <span className="font-mono text-emerald-400">{emailAddress}</span>
               </p>
 
               {formSubmitted ? (
-                <div className="p-6 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-center">
-                  <div className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-3">
+                <div className="p-6 sm:p-8 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-center animate-fade-in">
+                  <div className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-3 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
                     <Check className="w-6 h-6" />
                   </div>
-                  <h4 className="text-sm font-semibold text-white mb-1">
+                  <h4 className="text-base font-semibold text-white mb-1">
                     Message Dispatched Successfully!
                   </h4>
-                  <p className="text-xs text-slate-300">
-                    Thank you, {formData.name}. I will get back to you shortly.
+                  <p className="text-xs sm:text-sm text-slate-300 mb-4 max-w-sm mx-auto leading-relaxed">
+                    Thank you, <span className="font-semibold text-white">{formData.name}</span>. Your inquiry has been delivered directly to <span className="font-mono text-emerald-400">{emailAddress}</span>. I will get back to you shortly.
                   </p>
                   <button
                     type="button"
@@ -153,13 +253,41 @@ export function Contact() {
                       setFormSubmitted(false);
                       setFormData({ name: "", email: "", message: "" });
                     }}
-                    className="mt-4 text-xs font-mono text-emerald-400 hover:underline"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-mono bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 transition-colors cursor-pointer"
                   >
-                    Send another message
+                    <span>Send another message</span>
                   </button>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
+                  {errorMessage && (
+                    <div
+                      className={`p-3.5 rounded-xl text-xs flex flex-col gap-2 ${
+                        errorMessage.toLowerCase().includes("activation")
+                          ? "bg-amber-500/10 border border-amber-500/30 text-amber-200"
+                          : "bg-rose-500/10 border border-rose-500/30 text-rose-300"
+                      }`}
+                    >
+                      <div className="flex items-start gap-2">
+                        <AlertCircle
+                          className={`w-4 h-4 shrink-0 mt-0.5 ${
+                            errorMessage.toLowerCase().includes("activation")
+                              ? "text-amber-400"
+                              : "text-rose-400"
+                          }`}
+                        />
+                        <span className="leading-relaxed">{errorMessage}</span>
+                      </div>
+                      <a
+                        href={fallbackMailto}
+                        className="inline-flex items-center gap-1.5 text-[11px] font-mono text-emerald-400 hover:underline mt-1"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        <span>Or click here to send directly via your email app</span>
+                      </a>
+                    </div>
+                  )}
+
                   <div>
                     <label
                       htmlFor="name"
@@ -171,12 +299,13 @@ export function Contact() {
                       id="name"
                       required
                       type="text"
+                      disabled={isSubmitting}
                       value={formData.name}
                       onChange={(e) =>
                         setFormData({ ...formData, name: e.target.value })
                       }
                       placeholder="Jane Doe"
-                      className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 transition-colors"
+                      className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
                     />
                   </div>
 
@@ -191,12 +320,13 @@ export function Contact() {
                       id="email"
                       required
                       type="email"
+                      disabled={isSubmitting}
                       value={formData.email}
                       onChange={(e) =>
                         setFormData({ ...formData, email: e.target.value })
                       }
                       placeholder="jane@company.com"
-                      className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 transition-colors"
+                      className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
                     />
                   </div>
 
@@ -211,22 +341,33 @@ export function Contact() {
                       id="message"
                       required
                       rows={4}
+                      disabled={isSubmitting}
                       value={formData.message}
                       onChange={(e) =>
                         setFormData({ ...formData, message: e.target.value })
                       }
                       placeholder="Tell me about the system requirements, scale, or engineering problem..."
-                      className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 transition-colors resize-none"
+                      className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 transition-colors resize-none disabled:opacity-50"
                     />
                   </div>
 
                   <MagneticButton strength={0.2} className="w-full">
                     <button
                       type="submit"
-                      className="w-full py-3 px-6 rounded-xl font-semibold text-sm bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer"
+                      disabled={isSubmitting}
+                      className="w-full py-3 px-6 rounded-xl font-semibold text-sm bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                     >
-                      <span>Dispatch Message</span>
-                      <Send className="w-4 h-4" />
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Dispatching Message...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Dispatch Message</span>
+                          <Send className="w-4 h-4" />
+                        </>
+                      )}
                     </button>
                   </MagneticButton>
                 </form>
